@@ -1,11 +1,17 @@
-const metrics = [
-  ["Revenue", "₹0", "Verified payments"],
-  ["New enquiries", "0", "Requires attention"],
-  ["Consultations", "0", "Upcoming this week"],
-  ["Open support", "0", "Customer & consultant"]
-];
-const navigation = ["Overview", "Sales", "Consultations", "Commerce", "Academy", "Support", "Content", "System health"];
+import { AdminCommandCentre } from "../../components/admin-command-centre";
+import { createAuthServerClient } from "../../lib/supabase/auth";
 
-export default function AdminDashboard() {
-  return <main className="admin-dashboard"><aside className="admin-sidebar"><a className="admin-wordmark" href="/"><span className="admin-mark"><span>↗</span></span><span>ATTRI<small>CONTROL CENTRE</small></span></a><nav>{navigation.map((item, index) => <a className={index === 0 ? "active" : ""} href="#" key={item}><span>{String(index + 1).padStart(2, "0")}</span>{item}</a>)}</nav><div className="admin-sidebar-foot"><span className="admin-status"></span>Secure session<br/><small>Role validation pending</small></div></aside><section className="admin-workspace"><header className="admin-topbar"><div><div className="tag">Command centre</div><h1>Good morning.</h1></div><div className="admin-actions"><a href="/" className="outline-action">View website ↗</a><span className="admin-avatar">A</span></div></header><div className="admin-notice"><b>Set-up in progress</b><span>Apply the Supabase phase-one migration to activate live records, secure role controls and analytics.</span><a href="/admin/login">View login →</a></div><section className="admin-metrics">{metrics.map(([label, value, detail]) => <article key={label}><p>{label}</p><strong>{value}</strong><small>{detail}</small></article>)}</section><section className="admin-grid"><article className="admin-panel admin-wide"><div className="panel-head"><div><div className="tag">Operational pulse</div><h2>Recent activity</h2></div><a href="#">View all →</a></div><div className="empty-state"><span>◇</span><p>Your activity stream will appear here after the first enquiry, booking, order or content update.</p></div></article><article className="admin-panel"><div className="panel-head"><div><div className="tag">Action required</div><h2>System health</h2></div></div><ul className="health-list"><li><span>Database migration</span><b>Pending</b></li><li><span>Supabase role access</span><b>Pending</b></li><li><span>Enquiry intake</span><b>Prepared</b></li><li><span>Public website</span><b className="ready">Online</b></li></ul></article></section><section className="admin-panel"><div className="panel-head"><div><div className="tag">Module control</div><h2>Business modules</h2></div><a href="#">Manage modules →</a></div><div className="module-list">{["Consultations", "Commerce", "Academy", "Projects", "Content", "Support"].map((item, index) => <div key={item}><span>{String(index + 1).padStart(2, "0")}</span><b>{item}</b><small>{index < 3 ? "Configured" : "Planned"}</small><i className={index < 3 ? "on" : ""}></i></div>)}</div></section></section></main>;
+export const dynamic = "force-dynamic";
+
+export default async function AdminDashboard() {
+  const supabase = await createAuthServerClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  const [profileResult, modulesResult, enquiryResult, attentionResult, recentResult] = await Promise.all([
+    supabase.from("profiles").select("full_name, role").eq("id", user?.id ?? "").maybeSingle(),
+    supabase.from("module_controls").select("key,label,active,sort_order").order("sort_order"),
+    supabase.from("enquiries").select("id", { count: "exact", head: true }).eq("status", "new"),
+    supabase.from("enquiries").select("id", { count: "exact", head: true }).in("priority", ["high", "urgent"]).in("status", ["new", "contacted", "qualified", "proposal_sent", "follow_up"]),
+    supabase.from("enquiries").select("id,reference,name,service,status,priority,created_at").order("created_at", { ascending: false }).limit(4)
+  ]);
+  return <AdminCommandCentre adminName={profileResult.data?.full_name || user?.email?.split("@")[0] || "Administrator"} role={profileResult.data?.role || "staff"} modules={modulesResult.data || []} newLeads={enquiryResult.count || 0} needsAttention={attentionResult.count || 0} recentEnquiries={recentResult.data || []} />;
 }
