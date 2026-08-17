@@ -1,2 +1,0 @@
-import { EnquiryForm } from "@/components/enquiry-form";
-export default function Book(){return <><section className="page-hero"><div className="container"><div className="eyebrow">Private consultation</div><h1>Bring clarity to your space.</h1><p className="lead">Tell us what you need. Our team will confirm the appropriate consultant, mode and available schedule.</p></div></section><section className="section"><div className="container" style={{maxWidth:820}}><EnquiryForm/></div></section></>}
