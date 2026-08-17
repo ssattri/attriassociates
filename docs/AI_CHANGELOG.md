@@ -1,5 +1,11 @@
 # AI change log
 
+## 2026-08-17 — Leads & CRM foundation
+
+- Added the live `/admin/enquiries` workspace for viewing, searching and filtering website service enquiries.
+- Added staff-only workflow updates for enquiry status and priority, with a server-side role check.
+- Added migration `20260817160000_crm_enquiry_audit.sql` to record each workflow change in `audit_logs` under RLS.
+
 ## 2026-08-17 — Admin command centre
 
 - Rebuilt `/admin` to match the approved command-centre reference: navigation rail, operational header, metric cards, monitoring panels and responsive layout.
