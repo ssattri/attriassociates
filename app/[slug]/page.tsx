@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 const content: Record<string, { label: string; title: string; text: string }> = {
   about: { label: "Our practice", title: "About Attri Associates", text: "Led by CE. SS Attri, our practice brings together scientific Vastu, architecture and design coordination for clients in India and worldwide." },
@@ -9,11 +10,15 @@ const content: Record<string, { label: string; title: string; text: string }> = 
   "terms-and-conditions": { label: "Legal", title: "Terms & conditions", text: "Service and platform terms will be published here before online transactions are enabled." }
 };
 
-export function generateStaticParams() { return Object.keys(content).map((slug) => ({ slug })); }
+export const dynamic = "force-dynamic";
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const page = content[slug];
-  if (!page) notFound();
-  return <main><section className="hero"><div className="container"><div className="eyebrow">{page.label}</div><h1>{page.title}</h1><p className="lead">{page.text}</p><div className="actions"><a className="button gold" href="mailto:attriassociates99@gmail.com">Email our team</a><a className="button outline" href="/">Back to home</a></div></div></section></main>;
+  const fallback = content[slug];
+  const supabase = createServerSupabaseClient();
+  const { data: cmsPage } = await supabase.from("pages").select("title,excerpt,body").eq("slug", slug).eq("status", "published").is("deleted_at", null).maybeSingle();
+  if (!fallback && !cmsPage) notFound();
+  const body = Array.isArray(cmsPage?.body) ? cmsPage.body.map((block: { value?: string }) => block.value || "").join("\n\n") : "";
+  const page = cmsPage ? { label: "Attri Associates", title: cmsPage.title, text: body || cmsPage.excerpt || "" } : fallback!;
+  return <main><section className="hero"><div className="container"><div className="eyebrow">{page.label}</div><h1>{page.title}</h1><p className="lead" style={{ whiteSpace: "pre-line" }}>{page.text}</p><div className="actions"><a className="button gold" href="/consultation">Book consultation</a><a className="button outline" href="/">Back to home</a></div></div></section></main>;
 }
