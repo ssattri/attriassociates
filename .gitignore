@@ -10,6 +10,7 @@ out/
 Thumbs.db
 .vercel/
 coverage/
+*.tsbuildinfo
 supabase/.branches/
 supabase/.temp/
 uploads/

@@ -14,3 +14,4 @@ All notable changes follow Keep a Changelog principles. The project is pre-relea
 - Validated, origin-protected enquiry endpoint.
 - Phase-one Supabase schema with RLS, explicit grants and indexes.
 - Architecture, deployment, AI handoff and integration documentation.
+- Explicit `vercel.json` Next.js project metadata and synchronized npm lockfile for Git imports.

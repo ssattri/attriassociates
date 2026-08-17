@@ -2,6 +2,10 @@
 
 Target Node.js 22 or newer. Supabase client libraries ended Node.js 20 support in June 2026.
 
+## Vercel/Git import troubleshooting
+
+The repository root must contain `package.json`, `package-lock.json`, `next.config.ts`, `app/` and `tsconfig.json`. In the import screen, choose the `attriassociates` repository and leave the Root Directory as `/`. `vercel.json` explicitly identifies this as a Next.js project. If Vercel still reports an unsupported framework, refresh the Git integration and import the latest `main` commit; do not select a nested folder.
+
 1. Create the Supabase production project and apply reviewed migrations with the Supabase CLI or Dashboard SQL editor.
 2. Create `.env.production` only on the server from `.env.example`. Never commit it.
 3. Clone the repository, run `npm ci`, `npm run typecheck`, `npm run lint`, then `npm run build`.
