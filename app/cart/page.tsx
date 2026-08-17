@@ -1,0 +1,1 @@
+export default function Cart(){return <main className="portfolio-page"><header><div className="tag">Vastu shop</div><h1>Your <em>cart.</em></h1><p>Secure checkout is being enabled. Add products from the shop and review your order here.</p></header><div className="portfolio-empty">Your cart is empty. <a href="/shop">Explore the Vastu Shop →</a></div></main>}
