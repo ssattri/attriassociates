@@ -1,0 +1,10 @@
+create table public.services_catalogue(id uuid primary key default gen_random_uuid(),name text not null,summary text not null default '',status text not null default 'draft' check(status in('draft','published','archived')),created_at timestamptz not null default now());
+create table public.branches(id uuid primary key default gen_random_uuid(),name text not null,address text not null default '',city text,phone text,status text not null default 'active' check(status in('active','inactive','archived')),created_at timestamptz not null default now());
+create table public.faqs(id uuid primary key default gen_random_uuid(),question text not null,answer text not null,status text not null default 'draft' check(status in('draft','published','archived')),sort_order int not null default 0,created_at timestamptz not null default now());
+alter table public.services_catalogue enable row level security;alter table public.branches enable row level security;alter table public.faqs enable row level security;
+create policy "staff manage services catalogue" on public.services_catalogue for all to authenticated using((select private.is_staff())) with check((select private.is_staff()));
+create policy "staff manage branches" on public.branches for all to authenticated using((select private.is_staff())) with check((select private.is_staff()));
+create policy "staff manage faqs" on public.faqs for all to authenticated using((select private.is_staff())) with check((select private.is_staff()));
+create policy "published services public" on public.services_catalogue for select to anon,authenticated using(status='published');
+create policy "published faqs public" on public.faqs for select to anon,authenticated using(status='published');
+grant select on public.services_catalogue,public.faqs to anon,authenticated;grant select,insert,update,delete on public.services_catalogue,public.branches,public.faqs to authenticated;

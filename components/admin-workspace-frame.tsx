@@ -4,7 +4,7 @@ import { useState } from "react";
 
 const groups = [
   ["Dashboard", [["▦", "Overview", "/admin"], ["◔", "Analytics", "/admin/analytics"], ["♟", "Notifications", "/admin/notifications"]]],
-  ["Customers & delivery", [["♙", "Customer data", "/admin/customers"], ["♧", "Leads & CRM", "/admin/enquiries"], ["◫", "Consultations", "/admin/consultations"], ["◉", "Consultant access", "/admin/consultant-applications"]]],
+  ["Customers & delivery", [["♙", "Customer data", "/admin/customers"], ["▤", "Master data", "/admin/master-data"], ["♧", "Leads & CRM", "/admin/enquiries"], ["◫", "Consultations", "/admin/consultations"], ["◉", "Consultant access", "/admin/consultant-applications"]]],
   ["Content & commerce", [["▱", "Projects", "/admin/projects"], ["▤", "Articles", "/admin/articles"], ["◈", "Products", "/admin/products"], ["☆", "Reviews", "/admin/reviews"], ["▧", "Website content", "/admin/content"]]],
   ["System", [["⚙", "Settings", "/admin/settings"], ["⌘", "Integrations", "/admin/integrations"], ["♙", "Team access", "/admin/team"]]]
 ];
